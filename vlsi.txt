@@ -1,0 +1,459 @@
+exp1:
+
+FULL ADDER:
+
+GATE LEVEL MODELING:
+module fagm(s,c,a,b,cin);
+output s,c;
+input a,b,cin;
+wire w1,w2,w3,w4;
+xor x1(w1,a,b);
+xor x2(s,w1,cin);
+and a1(w2,a,b);
+and a2(w3,a,cin);
+and a3(w4,b,cin);
+or a4(c1,w2,w3,w4);
+endmodule
+
+DATA FLOW MODELING:
+module fadatflw(s,c,a,b,cin);
+output s,c;
+input a,b,cin;
+assign s=((a^b)^cin);
+assign c=((a&b)|(a&cin)|(b&cin));
+endmodule
+
+BEHAVIORAL MODELING:
+module fabeh(s,c,a,b,cin);
+output s,c;
+reg s,c;
+input a,b,cin;
+always @ (a or b or cin)
+begin
+case ({a,b,cin})
+3'b000: begin
+s=0; c=0; end
+3'b001: begin
+s=1; c=0; end
+3'b010: begin
+s=1; c=0; end
+3'b011: begin
+s=0; c=1; end
+3'b100: begin
+s=1; c=0; end
+3'b101: begin
+s=0; c=1; end
+3'b110: begin
+s=0; c=1; end
+3'b111: begin
+s=1; c=1; end
+endcase
+end
+endmodule
+
+
+
+FULL_SUBSTRACTOR:
+
+DATAFLOW MODELLING
+module fullsub (a,b,c,borrow,diff);
+input a,b,c;
+output borrow,diff;
+assign sum = a ^ b^c;
+assign carry = (~a&b) | (b&c) | (c&a);
+endmodule
+
+
+STRUCTURAL MODELLING
+Module fullsub (a,b,c,diff, borrow);
+input a,b,c;
+output diff, borrow;
+wire p1,p2,p3,x1;
+xor (diff,a,b,c);
+not (x1,a);
+and (p1,x1,b);
+and (p2,x1,c);
+and (p3,b,c);
+or (carry,p1,p2,p3);
+endmodule
+
+BEHAVIOURAL MODELLING
+module fsbeh(diff,bor,a,b,cin);
+output diff,bor;
+input a,b,cin;
+always @ (a or b or cin)
+begin
+case ({a,b,cin})
+3'b000: begin
+diff=0; bor=0; end
+3'b001: begin
+diff =1; bor =1; end
+3'b010: begin
+diff =1; bor =1; end
+3'b011: begin
+diff =0; bor =1; end
+3'b100: begin
+diff =1; bor =0; end
+3'b101: begin
+diff =0; bor =0; end
+3'b110: begin
+diff =0; bor =0; end
+3'b111: begin
+diff =1; bor =1; end
+endcase
+end
+endmodule
+
+
+
+
+EXP2:
+
+MULTIPLEXER:
+
+GATE LEVEL MODELING:
+
+module eight_mux(out,s,i);
+output out;
+input [2:0]s;
+input [7:0]i;
+wire [7:0]w;
+wire s0_,s1_,s2_;
+not n1(s0_,s[0]);
+not n2(s1_,s[1]);
+not n3(s2_,s[2]);
+and a1(w[0],s2_,s1_,s0_,i[0]);
+and a2(w[1],s2_,s1_,s[0],i[1]);
+and a3(w[2],s2_,s[1],s0_,i[2]);
+and a4(w[3],s2_,s[1],s[0],i[3]);
+and a5(w[4],s[2],s1_,s0_,i[4]);
+and a6(w[5],s[2],s1_,s[0],i[5]);
+and a7(w[6],s[2],s[1],s0_,i[6]);
+and a8(w[7],s[2],s[1],s[0],i[7]);
+or o1(out,w[0],w[1], w[2],w[3],w[4],w[5],w[6],w[7]);
+endmodule 
+
+
+DEMULTIPLEXER:
+
+BEHAVIORAL MODELING:
+
+module demuxbeh (out,s,i);
+output [7:0]out;
+input i;
+input [2:0]s;
+reg [7:0]out;
+always @ (s or i)
+begin
+case (s)
+3'b000: begin
+out= {7'b0000000,i};end
+3'b001: begin
+out= {6'b000000,i,1'b0};end
+3'b010: begin
+out= {5'b00000,i,2'b00};end
+3'b011: begin
+out= {4'b0000,i,3'b000};end
+3'b100: begin
+out= {3'b000,i,4'b0000};end
+3'b101: begin
+out= {2'b00,i,5'b00000};end
+3'b110: begin
+out= {1'b0,i,6'b000000};end
+3'b111: begin
+out= {i,7'b0000000};end
+endcase
+end
+endmodule
+
+
+
+EXP3
+ENCODER 
+
+GATE LEVEL MODELLING:
+module encoder_gl(x,y,z,d);
+output x,y,z;
+input [7:0]d;
+or o1(x,d[4],d[5],d[6],d[7]);
+or o2(y,d[2],d[3],d[6],d[7]);
+or o3(z,d[1],d[3],d[5],d[7]);
+endmodule
+
+DATA FLOW MODELLING:
+module encoder_df(e,i);
+output [2:0]e;
+input [7:0]i;
+assign e[0]=(i[1]|i[3]|i[5]|i[7]);
+assign e[1]=(i[2]|i[3]|i[6]|i[7]);
+assign e[2]=(i[4]|i[5]|i[5]|i[7]);
+endmodule
+
+BEHAVIOURAL MODELLING:
+module encoder_bh(e,i);
+output [2:0]e;
+input [7:0]i;
+reg [2:0]e;
+always @(e or i)
+begin
+case(i)
+8'b00000001:begin
+e={3'b000};end
+8'b00000010:begin
+e={3'b001};end
+8'b00000100:begin
+e={3'b010};end
+8'b00001000:begin
+e={3'b011};end
+8'b00010000:begin
+e={3'b100};end
+8'b00100000:begin
+e={3'b101};end
+8'b01000000:begin
+e={3'b110};end
+8'b10000000:begin
+e={3'b111};end
+endcase
+end
+endmodule
+
+
+DECODER:
+
+GATE LEVEL MODELLING:
+
+module decoder_gl(d,x,y,z);
+output [7:0]d;
+input x,y,z;
+wire x_,y_,z_;
+not n1(x_,x);
+not n2(y_,y);
+not n3(z_,z);
+and a1(d[0],x_,y_,z_);
+and a2(d[1],x_,y_,z);
+and a3(d[2],x_,y,z_);
+and a4(d[3],x_,y,z);
+and a5(d[4],x,y_,z_);
+and a6(d[5],x,y_,z);
+and a7(d[6],x,y,z_);
+and a8(d[7],x,y,z);
+endmodule
+
+DATA FLOW MODELLING:
+module decoder_df(d,i);
+output[7:0]d;
+input[2:0]i;
+wire[2:0]w;
+assign w[0]=~i[0];
+assign w[1]=~i[1];
+assign w[2]=~i[2];
+assign d[0]=(w[2]&(w[1]&w[0]));
+assign d[1]=(w[2]&(w[1]&i[0]));
+assign d[2]=(w[2]&(i[1]&w[0]));
+assign d[3]=(w[2]&(i[1]&i[0]));
+assign d[4]=(i[2]&(w[1]&w[0]));
+assign d[5]=(i[2]&(w[1]&i[0]));
+assign d[6]=(i[2]&(i[1]&w[0]));
+assign d[7]=(i[2]&(i[1]&i[0]));
+endmodule
+
+BEHAVIOURAL MODELLING:
+module decoder_bh(d,i);
+output [7:0]d;
+reg[7:0]d;
+input[2:0]i;
+always @(i)
+begin
+case(i)
+3'b000:
+begin
+d=(8'b00000001);
+end
+3'b001:
+begin
+d=(8'b00000010);
+end
+3'b010:
+begin
+d=(8'b00000100);
+end
+3'b011:
+begin
+d=(8'b00001000);
+end
+3'b100:
+begin
+d=(8'b00010000);
+end
+3'b101:
+begin
+d=(8'b00100000);
+end
+3'b110:
+begin
+d=(8'b01000000);
+end
+3'b111:
+begin
+d=(8'b10000000);
+end
+endcase
+end
+endmodule
+
+
+
+EXP4:
+
+D- FLIPFLOP
+
+module d_flip_flop ( din ,clk ,reset ,dout );
+output dout ;
+reg dout;
+input din ;
+input clk ;
+input reset ;
+always @ (posedge clk)
+begin
+ if (reset)
+ dout <= 1;
+ else
+ dout <= din;
+end
+endmodule
+
+JK FLIPFLOP
+
+module jkflop(j,k,clk,rst,q);
+input j,k,clk,rst;
+output q;
+reg q;
+always @(posedge clk)begin
+if(j==1 & k==1 & rst==0)begin
+q = ~q; //Toggles
+end
+else if(j==1 & k==0 & rst==0)begin
+q = 1; //Set
+end
+else if(j==0 & k==1)begin
+q = 0; //Cleared
+end
+end
+always @(posedge rst)begin
+q = 0; //The reset normally has negligible delay and hence ignored.
+end
+endmodule
+
+T FLIPFLOP
+
+module tff (data ,clk ,reset ,q);
+input data, clk, reset ;
+output q;
+reg q;
+always @ ( posedge clk)
+if (~reset) begin
+ q <= 1'b0;
+end
+else if (data) begin
+ q <= ~q;
+end
+endmodule 
+
+EXP5 SHIFT REG
+
+PROGRAM:
+
+SERIAL IN SERIAL OUT (SISO) SHIFT REGISTER:
+
+module shift (C, SI, SO);
+input C,SI;
+output SO;
+reg [7:0] tmp;
+ always @(posedge C)
+ begin
+ tmp = tmp &lt;&lt; 1;
+ tmp[0] = SI;
+ end
+ assign SO = tmp[7];
+endmodule
+
+SERIAL IN PARALLEL OUT (SIPO) SHIFT REGISTER:
+
+module shift (C, SI, PO);
+input C,SI;
+output [7:0] PO;
+reg [7:0] tmp;
+ always @(posedge C)
+ begin
+ tmp = {tmp[6:0], SI};
+ end
+ assign PO = tmp;
+endmodule
+
+PARALLEL IN SERIAL OUT (PISO) SHIFT REGISTER:
+
+module Shiftregister_PISO(Clk, Parallel_In,load, Serial_Out);
+input Clk,load;
+input [3:0]Parallel_In;
+output reg Serial_Out;
+reg [3:0]tmp;
+always @(posedge Clk)
+begin
+if(load)
+tmp&lt;=Parallel_In;
+else
+begin
+Serial_Out&lt;=tmp[3];
+tmp&lt;={tmp[2:0],1’b0};
+end
+end
+endmodule
+
+PARALLEL IN PARALLEL OUT (PIPO) SHIFT REGISTER:
+
+module pipo(din,clk,rst,dout);
+input [3:0] din;
+input clk,rst;
+output [3:0] dout;wire [3:0] din;
+wire clk,rst;
+reg [3:0] dout;
+always @(posedge clk or negedge rst)
+begin
+if(!rst)
+begin
+dout &lt;= 4’b0;
+end
+else
+begindout &lt;= din;
+end
+endendmodule 
+
+
+EXP 6A RAM
+
+PROGRAM:
+module single_port_sync_ram
+# (parameter ADDR_WIDTH = 4,
+parameter DATA_WIDTH = 32, parameter DEPTH = 16)
+(
+Input clk,
+input [ADDR_WIDTH-1:0] addr,
+inout [DATA_WIDTH-1:0] data,
+input CS,
+input we,
+input oe
+);
+reg [DATA_WIDTH-1:0] tmp_data;
+reg [DATA_WIDTH-1:0] mem [DEPTH];
+always @ (posedge clk) begin
+if (cs & we)
+mem[addr] <= data;
+end
+always @ (posedge clk) begin
+if (cs & we)
+tmp_data <= mem[addr];
+end
+assign data = cs & oe & !wr? tmp_data: 'hz;
+endmodule
+
+EXP6 B FIFO
